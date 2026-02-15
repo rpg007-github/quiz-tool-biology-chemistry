@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Hub | Interactive Quiz Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --deep: #111d35;
+  --card: #162040;
+  --accent: #00c9a7;
+  --accent-glow: rgba(0, 201, 167, 0.15);
+  --accent2: #6c5ce7;
+  --warm: #ffd166;
+  --coral: #ff6b6b;
+  --text: #e8edf5;
+  --muted: #8892a8;
+  --border: rgba(255,255,255,0.08);
+  --easy: #00c9a7;
+  --medium: #ffd166;
+  --hard: #ff6b6b;
+  --radius: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 20% 20%, rgba(0,201,167,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 80%, rgba(108,92,231,0.06) 0%, transparent 50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 40px 0 30px;
+}
+
+.header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.8em;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.header p {
+  color: var(--muted);
+  font-size: 1.05em;
+}
+
+.uwf-badge {
+  display: inline-block;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  color: var(--accent);
+  margin-bottom: 16px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Screens */
+.screen { display: none; animation: fadeUp 0.4s ease; }
+.screen.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Course Selection */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.course-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.course-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.course-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,201,167,0.1);
+}
+
+.course-card:hover::before { opacity: 1; }
+
+.course-icon {
+  font-size: 2em;
+  margin-bottom: 12px;
+}
+
+.course-card h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3em;
+  margin-bottom: 6px;
+}
+
+.course-card p {
+  color: var(--muted);
+  font-size: 0.88em;
+  line-height: 1.5;
+}
+
+.question-count-badge {
+  display: inline-block;
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-size: 0.75em;
+  padding: 3px 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+/* Settings Panel */
+.settings-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-top: 24px;
+}
+
+.settings-panel h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6em;
+  margin-bottom: 24px;
+}
+
+.setting-group {
+  margin-bottom: 28px;
+}
+
+.setting-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 0.95em;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.82em;
+}
+
+.difficulty-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.diff-btn {
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.95em;
+  transition: all 0.2s;
+}
+
+.diff-btn:hover { border-color: var(--muted); }
+.diff-btn.active[data-diff="easy"] { border-color: var(--easy); background: rgba(0,201,167,0.12); color: var(--easy); }
+.diff-btn.active[data-diff="medium"] { border-color: var(--medium); background: rgba(255,209,102,0.12); color: var(--medium); }
+.diff-btn.active[data-diff="hard"] { border-color: var(--hard); background: rgba(255,107,107,0.12); color: var(--hard); }
+.diff-btn.active[data-diff="mixed"] { border-color: var(--accent2); background: rgba(108,92,231,0.12); color: var(--accent2); }
+
+.format-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.format-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 0.9em;
+  transition: all 0.2s;
+}
+
+.format-btn:hover { border-color: var(--muted); }
+.format-btn.active { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); }
+
+.num-questions-slider {
+  width: 100%;
+  margin-top: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--deep);
+  outline: none;
+}
+
+.num-questions-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,201,167,0.3);
+}
+
+.slider-value {
+  text-align: center;
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.start-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #00a88a);
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.3px;
+}
+
+.start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,201,167,0.3);
+}
+
+/* Quiz Screen */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.quiz-info {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.quiz-badge {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: var(--deep);
+  border-radius: 3px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.question-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  margin-bottom: 20px;
+}
+
+.question-meta {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  font-size: 0.75em;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.meta-tag.easy { background: rgba(0,201,167,0.12); color: var(--easy); }
+.meta-tag.medium { background: rgba(255,209,102,0.12); color: var(--medium); }
+.meta-tag.hard { background: rgba(255,107,107,0.12); color: var(--hard); }
+.meta-tag.type { background: rgba(108,92,231,0.12); color: var(--accent2); }
+
+.question-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4em;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+/* Multiple Choice */
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1em;
+  text-align: left;
+  transition: all 0.2s;
+  line-height: 1.4;
+}
+
+.choice-btn:hover:not(.disabled) {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.choice-letter {
+  min-width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+
+.choice-btn.correct {
+  border-color: var(--easy);
+  background: rgba(0,201,167,0.1);
+}
+
+.choice-btn.correct .choice-letter {
+  background: var(--easy);
+  color: var(--navy);
+}
+
+.choice-btn.wrong {
+  border-color: var(--coral);
+  background: rgba(255,107,107,0.1);
+}
+
+.choice-btn.wrong .choice-letter {
+  background: var(--coral);
+  color: white;
+}
+
+/* True/False */
+.tf-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.tf-btn {
+  padding: 20px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.2em;
+  transition: all 0.2s;
+}
+
+.tf-btn:hover:not(.disabled) {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.tf-btn.correct { border-color: var(--easy); background: rgba(0,201,167,0.1); }
+.tf-btn.wrong { border-color: var(--coral); background: rgba(255,107,107,0.1); }
+
+/* Short Answer / Fill in the Blank */
+.answer-input-container {
+  display: flex;
+  gap: 12px;
+}
+
+.answer-input {
+  flex: 1;
+  padding: 14px 18px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--deep);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.answer-input:focus { border-color: var(--accent); }
+.answer-input::placeholder { color: var(--muted); }
+
+.submit-answer-btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.submit-answer-btn:hover { background: #00ddb5; }
+
+/* Feedback */
+.feedback {
+  margin-top: 20px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  font-size: 0.95em;
+  line-height: 1.6;
+  display: none;
+}
+
+.feedback.correct {
+  background: rgba(0,201,167,0.1);
+  border: 1px solid rgba(0,201,167,0.2);
+  color: var(--easy);
+  display: block;
+}
+
+.feedback.wrong {
+  background: rgba(255,107,107,0.1);
+  border: 1px solid rgba(255,107,107,0.2);
+  color: var(--coral);
+  display: block;
+}
+
+.feedback strong { display: block; margin-bottom: 4px; font-size: 1.05em; }
+
+/* Next Button */
+.next-btn {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--accent);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: none;
+}
+
+.next-btn:hover {
+  background: var(--accent);
+  color: var(--navy);
+}
+
+/* Difficulty adjust during quiz */
+.difficulty-adjust {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.adjust-label {
+  font-size: 0.8em;
+  color: var(--muted);
+}
+
+.adjust-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.8em;
+  transition: all 0.2s;
+}
+
+.adjust-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.adjust-btn.active-diff { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+/* Results */
+.results-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.score-ring {
+  width: 180px; height: 180px;
+  margin: 0 auto 28px;
+  position: relative;
+}
+
+.score-ring svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-ring circle {
+  fill: none;
+  stroke-width: 8;
+}
+
+.score-ring .bg { stroke: var(--deep); }
+
+.score-ring .fill {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.5s ease;
+}
+
+.score-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.score-percent {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.8em;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.score-label {
+  font-size: 0.85em;
+  color: var(--muted);
+}
+
+.results-card h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8em;
+  margin-bottom: 8px;
+}
+
+.results-card p {
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+.results-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-box {
+  background: var(--deep);
+  padding: 18px;
+  border-radius: 12px;
+}
+
+.stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.8em;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 0.8em;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.result-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.result-btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95em;
+}
+
+.result-btn.primary {
+  background: var(--accent);
+  color: var(--navy);
+  border: none;
+}
+
+.result-btn.secondary {
+  background: transparent;
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+
+.result-btn:hover { transform: translateY(-2px); }
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.back-btn:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .header h1 { font-size: 2em; }
+  .course-grid { grid-template-columns: 1fr; }
+  .question-text { font-size: 1.15em; }
+  .question-card { padding: 24px 20px; }
+  .settings-panel { padding: 24px 20px; }
+  .results-stats { grid-template-columns: 1fr; }
+  .tf-buttons { grid-template-columns: 1fr; }
+  .answer-input-container { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Study Hub</h1>
+    <p>Interactive quiz platform with adaptive difficulty</p>
+  </div>
+
+  <!-- Screen 1: Course Selection -->
+  <div id="screen-courses" class="screen active">
+    <div class="course-grid" id="courseGrid"></div>
+  </div>
+
+  <!-- Screen 2: Quiz Settings -->
+  <div id="screen-settings" class="screen">
+    <button class="back-btn" onclick="showScreen('courses')">&#8592; Back to courses</button>
+    <div class="settings-panel">
+      <h2 id="settingsTitle">Configure Your Quiz</h2>
+
+      <div class="setting-group">
+        <label>Difficulty</label>
+        <div class="difficulty-buttons">
+          <button class="diff-btn active" data-diff="mixed" onclick="setDifficulty('mixed')">Mixed</button>
+          <button class="diff-btn" data-diff="easy" onclick="setDifficulty('easy')">Easy</button>
+          <button class="diff-btn" data-diff="medium" onclick="setDifficulty('medium')">Medium</button>
+          <button class="diff-btn" data-diff="hard" onclick="setDifficulty('hard')">Hard</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label>Question Formats</label>
+        <div class="format-options">
+          <button class="format-btn active" data-fmt="all" onclick="toggleFormat('all')">All Types</button>
+          <button class="format-btn" data-fmt="mc" onclick="toggleFormat('mc')">Multiple Choice</button>
+          <button class="format-btn" data-fmt="tf" onclick="toggleFormat('tf')">True / False</button>
+          <button class="format-btn" data-fmt="fill" onclick="toggleFormat('fill')">Fill in Blank</button>
+          <button class="format-btn" data-fmt="short" onclick="toggleFormat('short')">Short Answer</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label>Number of Questions</label>
+        <input type="range" class="num-questions-slider" id="numSlider" min="5" max="30" value="10" oninput="updateSlider()">
+        <div class="slider-value" id="sliderVal">10</div>
+      </div>
+
+      <button class="start-btn" onclick="startQuiz()">Start Quiz</button>
+    </div>
+  </div>
+
+  <!-- Screen 3: Quiz -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-header">
+      <div class="quiz-info">
+        <span class="quiz-badge" id="quizCourse"></span>
+        <span class="quiz-badge" id="quizProgress"></span>
+      </div>
+      <div class="quiz-info">
+        <span class="quiz-badge" id="quizScore">Score: 0</span>
+      </div>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div id="questionArea"></div>
+    <div class="difficulty-adjust">
+      <span class="adjust-label">Adjust difficulty:</span>
+      <button class="adjust-btn" data-adj="easy" onclick="adjustDiff('easy')">Easier</button>
+      <button class="adjust-btn" data-adj="medium" onclick="adjustDiff('medium')">Medium</button>
+      <button class="adjust-btn" data-adj="hard" onclick="adjustDiff('hard')">Harder</button>
+    </div>
+  </div>
+
+  <!-- Screen 4: Results -->
+  <div id="screen-results" class="screen">
+    <div class="results-card">
+      <div class="score-ring">
+        <svg viewBox="0 0 200 200">
+          <circle class="bg" cx="100" cy="100" r="88"/>
+          <circle class="fill" id="scoreCircle" cx="100" cy="100" r="88"
+            stroke-dasharray="553" stroke-dashoffset="553"/>
+        </svg>
+        <div class="score-text">
+          <div class="score-percent" id="finalPercent">0%</div>
+          <div class="score-label">Score</div>
+        </div>
+      </div>
+      <h2 id="resultsMessage">Great work!</h2>
+      <p id="resultsDetail"></p>
+      <div class="results-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="statCorrect" style="color:var(--easy)">0</div>
+          <div class="stat-label">Correct</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statWrong" style="color:var(--coral)">0</div>
+          <div class="stat-label">Incorrect</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statTotal" style="color:var(--accent2)">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+      </div>
+      <div class="result-buttons">
+        <button class="result-btn primary" onclick="retryQuiz()">Try Again</button>
+        <button class="result-btn secondary" onclick="showScreen('courses')">Pick New Course</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// QUESTION BANK
+// ============================================================
+const QUESTIONS = {
+  "bio1": {
+    name: "Biology I",
+    icon: "🧬",
+    desc: "Cell biology, genetics, evolution, and ecology fundamentals",
+    questions: [
+      // EASY MC
+      {type:"mc",diff:"easy",q:"What is the basic unit of life?",choices:["Atom","Cell","Tissue","Organ"],answer:1,explain:"The cell is the smallest unit capable of carrying out all life functions."},
+      {type:"mc",diff:"easy",q:"Which organelle is known as the 'powerhouse of the cell'?",choices:["Nucleus","Ribosome","Mitochondria","Golgi apparatus"],answer:2,explain:"Mitochondria produce ATP through cellular respiration."},
+      {type:"mc",diff:"easy",q:"What molecule carries genetic information?",choices:["RNA","Protein","DNA","Lipid"],answer:2,explain:"DNA (deoxyribonucleic acid) stores and transmits hereditary information."},
+      {type:"mc",diff:"easy",q:"Which macromolecule serves as the primary energy source for cells?",choices:["Proteins","Lipids","Carbohydrates","Nucleic acids"],answer:2,explain:"Carbohydrates like glucose are the preferred energy source for cellular respiration."},
+      {type:"mc",diff:"easy",q:"What type of cell lacks a membrane-bound nucleus?",choices:["Eukaryotic","Prokaryotic","Plant","Animal"],answer:1,explain:"Prokaryotic cells (bacteria and archaea) lack a membrane-bound nucleus."},
+      {type:"mc",diff:"easy",q:"Water is considered a polar molecule because it has:",choices:["Equal sharing of electrons","Unequal charge distribution","No hydrogen bonds","Ionic bonds"],answer:1,explain:"Oxygen is more electronegative than hydrogen, creating partial charges."},
+      {type:"mc",diff:"easy",q:"Which process converts light energy into chemical energy?",choices:["Cellular respiration","Fermentation","Photosynthesis","Glycolysis"],answer:2,explain:"Photosynthesis in chloroplasts converts light energy to glucose."},
+      {type:"mc",diff:"easy",q:"How many chromosomes do human somatic cells have?",choices:["23","44","46","92"],answer:2,explain:"Humans have 46 chromosomes (23 pairs) in their somatic (body) cells."},
+      // MEDIUM MC
+      {type:"mc",diff:"medium",q:"During which phase of mitosis do chromosomes align at the cell's equator?",choices:["Prophase","Metaphase","Anaphase","Telophase"],answer:1,explain:"During metaphase, chromosomes line up along the metaphase plate."},
+      {type:"mc",diff:"medium",q:"Which type of transport requires energy (ATP)?",choices:["Osmosis","Facilitated diffusion","Active transport","Simple diffusion"],answer:2,explain:"Active transport moves molecules against their concentration gradient, requiring ATP."},
+      {type:"mc",diff:"medium",q:"In DNA, adenine pairs with which nucleotide?",choices:["Cytosine","Guanine","Thymine","Uracil"],answer:2,explain:"Chargaff's rules: A pairs with T (in DNA) via two hydrogen bonds."},
+      {type:"mc",diff:"medium",q:"What is the function of the rough endoplasmic reticulum?",choices:["Lipid synthesis","Protein synthesis and processing","ATP production","Cell division"],answer:1,explain:"Rough ER has ribosomes on its surface for protein synthesis and modification."},
+      {type:"mc",diff:"medium",q:"Which enzyme unzips the DNA double helix during replication?",choices:["DNA polymerase","RNA polymerase","Helicase","Ligase"],answer:2,explain:"Helicase breaks hydrogen bonds between base pairs, separating the two strands."},
+      {type:"mc",diff:"medium",q:"The fluid mosaic model describes the structure of:",choices:["DNA","Cytoskeleton","Cell membrane","Nuclear envelope"],answer:2,explain:"The cell membrane is a fluid mosaic of phospholipids, proteins, and cholesterol."},
+      {type:"mc",diff:"medium",q:"What is the net yield of ATP from one glucose molecule in aerobic respiration?",choices:["2 ATP","4 ATP","36-38 ATP","100 ATP"],answer:2,explain:"Aerobic respiration yields approximately 36-38 ATP per glucose molecule."},
+      {type:"mc",diff:"medium",q:"Which of the following is an example of a hydrogen bond?",choices:["Bond between Na and Cl","Bond between two oxygen atoms in O2","Bond between water molecules","Bond in a peptide chain"],answer:2,explain:"Water molecules form hydrogen bonds between the H of one molecule and O of another."},
+      // HARD MC
+      {type:"mc",diff:"hard",q:"In the lac operon, what role does allolactose play?",choices:["It acts as a corepressor","It binds to the operator","It induces transcription by binding the repressor","It activates RNA polymerase directly"],answer:2,explain:"Allolactose binds the lac repressor, causing it to release from the operator, enabling transcription."},
+      {type:"mc",diff:"hard",q:"Which of the following correctly describes the chemiosmotic hypothesis?",choices:["ATP is produced by substrate-level phosphorylation only","A proton gradient across the inner mitochondrial membrane drives ATP synthase","Electrons are transferred directly to oxygen in the cytoplasm","NADH is produced in the intermembrane space"],answer:1,explain:"The proton (H+) gradient created by the ETC drives ATP synthase to produce ATP."},
+      {type:"mc",diff:"hard",q:"A point mutation that changes a codon to a stop codon is called a:",choices:["Missense mutation","Silent mutation","Nonsense mutation","Frameshift mutation"],answer:2,explain:"Nonsense mutations create a premature stop codon, truncating the protein."},
+      {type:"mc",diff:"hard",q:"During meiosis, genetic diversity is increased by all EXCEPT:",choices:["Crossing over","Independent assortment","Random fertilization","Mitotic spindle formation"],answer:3,explain:"Mitotic spindle formation is a mechanical process and does not contribute to genetic variation."},
+      // TRUE/FALSE
+      {type:"tf",diff:"easy",q:"Plant cells have a cell wall, but animal cells do not.",answer:true,explain:"Plant cells have a rigid cellulose cell wall; animal cells only have a plasma membrane."},
+      {type:"tf",diff:"easy",q:"Enzymes are consumed during the reactions they catalyze.",answer:false,explain:"Enzymes are catalysts and are not consumed; they can be reused."},
+      {type:"tf",diff:"easy",q:"All living organisms are made of cells.",answer:true,explain:"This is one of the fundamental tenets of cell theory."},
+      {type:"tf",diff:"medium",q:"RNA polymerase requires a primer to begin transcription.",answer:false,explain:"Unlike DNA polymerase, RNA polymerase can initiate transcription without a primer."},
+      {type:"tf",diff:"medium",q:"The products of the light reactions of photosynthesis include ATP and NADPH.",answer:true,explain:"Light reactions produce ATP, NADPH, and oxygen as a byproduct."},
+      {type:"tf",diff:"medium",q:"Codominance and incomplete dominance produce identical phenotypic results.",answer:false,explain:"Codominance shows both phenotypes simultaneously; incomplete dominance shows a blended phenotype."},
+      {type:"tf",diff:"hard",q:"Prokaryotes can perform oxidative phosphorylation using their cell membrane.",answer:true,explain:"Without mitochondria, prokaryotes use their plasma membrane for the electron transport chain."},
+      {type:"tf",diff:"hard",q:"Alternative splicing allows one gene to code for multiple proteins.",answer:true,explain:"By including/excluding different exons, a single gene can produce multiple mRNA variants and proteins."},
+      // FILL IN THE BLANK
+      {type:"fill",diff:"easy",q:"The process by which cells divide to produce two identical daughter cells is called ____.",answer:["mitosis"],explain:"Mitosis produces two genetically identical diploid daughter cells."},
+      {type:"fill",diff:"easy",q:"Organisms that make their own food using sunlight are called ____.",answer:["autotrophs","autotroph","producers"],explain:"Autotrophs (producers) convert light energy to chemical energy via photosynthesis."},
+      {type:"fill",diff:"medium",q:"The three-nucleotide sequence on mRNA that codes for an amino acid is called a ____.",answer:["codon"],explain:"A codon is a sequence of three nucleotides on mRNA read during translation."},
+      {type:"fill",diff:"medium",q:"The movement of water across a semipermeable membrane is called ____.",answer:["osmosis"],explain:"Osmosis is the passive diffusion of water from high to low water concentration."},
+      {type:"fill",diff:"hard",q:"The enzyme that adds nucleotides during DNA replication is ____.",answer:["dna polymerase","polymerase"],explain:"DNA polymerase synthesizes new DNA strands by adding nucleotides complementary to the template."},
+      {type:"fill",diff:"hard",q:"In cellular respiration, the final electron acceptor in the electron transport chain is ____.",answer:["oxygen","o2","molecular oxygen"],explain:"Oxygen accepts electrons at the end of the ETC, forming water."},
+      // SHORT ANSWER
+      {type:"short",diff:"medium",q:"Explain why water is essential for life. Name at least two of its important properties.",answer:["Water is a polar solvent, has high specific heat capacity, exhibits cohesion and adhesion, and serves as a medium for biochemical reactions."],keywords:["solvent","polar","specific heat","cohesion","adhesion","biochemical","hydrogen bond"],explain:"Water's polarity makes it an excellent solvent. Its high specific heat buffers temperature changes. Cohesion and adhesion enable capillary action in plants."},
+      {type:"short",diff:"medium",q:"Describe the difference between a genotype and a phenotype.",answer:["Genotype is the genetic makeup (alleles) of an organism, while phenotype is the observable physical or biochemical characteristics expressed."],keywords:["genotype","genetic","allele","phenotype","observable","physical","trait","express"],explain:"Genotype refers to the alleles present; phenotype is the expression of those alleles as observable traits, influenced by both genetics and environment."},
+      {type:"short",diff:"hard",q:"Explain how the structure of the phospholipid bilayer contributes to membrane function.",answer:["The amphipathic phospholipids form a bilayer with hydrophilic heads facing water and hydrophobic tails facing inward, creating a selectively permeable barrier."],keywords:["amphipathic","hydrophilic","hydrophobic","bilayer","selectively permeable","barrier","phospholipid","heads","tails","fluid"],explain:"Phospholipids' dual nature creates a barrier: polar heads interact with water while nonpolar tails prevent passage of most water-soluble molecules, making the membrane selectively permeable."},
+    ]
+  },
+  "chem1": {
+    name: "General Chemistry I",
+    icon: "⚗️",
+    desc: "Atomic structure, bonding, stoichiometry, and reactions",
+    questions: [
+      // EASY MC
+      {type:"mc",diff:"easy",q:"What is the atomic number of carbon?",choices:["4","6","8","12"],answer:1,explain:"Carbon has 6 protons, giving it an atomic number of 6."},
+      {type:"mc",diff:"easy",q:"Which subatomic particle has a negative charge?",choices:["Proton","Neutron","Electron","Photon"],answer:2,explain:"Electrons carry a negative charge of -1."},
+      {type:"mc",diff:"easy",q:"What type of bond involves the sharing of electrons?",choices:["Ionic","Covalent","Metallic","Hydrogen"],answer:1,explain:"Covalent bonds form when atoms share electron pairs."},
+      {type:"mc",diff:"easy",q:"How many elements are in a molecule of H₂O?",choices:["1","2","3","4"],answer:1,explain:"Water (H₂O) contains two elements: hydrogen and oxygen."},
+      {type:"mc",diff:"easy",q:"What is the pH of a neutral solution?",choices:["0","5","7","14"],answer:2,explain:"A neutral solution has a pH of 7, where [H+] equals [OH-]."},
+      {type:"mc",diff:"easy",q:"Which state of matter has a definite volume but no definite shape?",choices:["Solid","Liquid","Gas","Plasma"],answer:1,explain:"Liquids maintain their volume but take the shape of their container."},
+      // MEDIUM MC
+      {type:"mc",diff:"medium",q:"According to the octet rule, atoms tend to gain, lose, or share electrons to achieve:",choices:["2 valence electrons","4 valence electrons","6 valence electrons","8 valence electrons"],answer:3,explain:"The octet rule states atoms tend to bond to achieve 8 valence electrons (noble gas configuration)."},
+      {type:"mc",diff:"medium",q:"What is the molarity of a solution with 2 moles of NaCl in 500 mL of solution?",choices:["1 M","2 M","4 M","0.5 M"],answer:2,explain:"Molarity = moles/liters = 2 mol / 0.5 L = 4 M."},
+      {type:"mc",diff:"medium",q:"In a balanced equation, 2H₂ + O₂ → 2H₂O, how many moles of water are produced from 3 moles of H₂?",choices:["1.5","2","3","6"],answer:2,explain:"The ratio is 2:2, so 3 moles H₂ produces 3 moles H₂O."},
+      {type:"mc",diff:"medium",q:"Which of the following is an exothermic reaction?",choices:["Melting ice","Evaporating water","Combustion of methane","Photosynthesis"],answer:2,explain:"Combustion releases heat energy to the surroundings, making it exothermic."},
+      {type:"mc",diff:"medium",q:"What is the electron configuration of nitrogen (Z=7)?",choices:["1s² 2s² 2p¹","1s² 2s² 2p²","1s² 2s² 2p³","1s² 2s² 2p⁴"],answer:2,explain:"Nitrogen has 7 electrons: 1s² 2s² 2p³."},
+      {type:"mc",diff:"medium",q:"Le Chatelier's principle states that if a system at equilibrium is disturbed, it will:",choices:["Stop reacting","Shift to counteract the disturbance","Always shift right","Produce more heat"],answer:1,explain:"The system shifts in the direction that partially counteracts the applied change."},
+      // HARD MC
+      {type:"mc",diff:"hard",q:"What is the hybridization of carbon in methane (CH₄)?",choices:["sp","sp²","sp³","sp³d"],answer:2,explain:"Carbon in methane forms 4 equivalent bonds requiring sp³ hybridization (tetrahedral geometry)."},
+      {type:"mc",diff:"hard",q:"The rate law for a reaction is Rate = k[A]²[B]. If [A] is doubled, the rate:",choices:["Doubles","Triples","Quadruples","Increases 8-fold"],answer:2,explain:"Rate depends on [A]², so doubling [A] increases the rate by 2² = 4 times."},
+      {type:"mc",diff:"hard",q:"Which thermodynamic quantity determines reaction spontaneity?",choices:["Enthalpy (ΔH)","Entropy (ΔS)","Gibbs free energy (ΔG)","Activation energy"],answer:2,explain:"A reaction is spontaneous when ΔG < 0 (ΔG = ΔH - TΔS)."},
+      {type:"mc",diff:"hard",q:"In a galvanic cell, oxidation occurs at the:",choices:["Cathode","Anode","Salt bridge","External wire"],answer:1,explain:"Oxidation occurs at the anode (AN OX); reduction occurs at the cathode (RED CAT)."},
+      // TRUE/FALSE
+      {type:"tf",diff:"easy",q:"An atom with more protons than electrons has a positive charge.",answer:true,explain:"Losing electrons gives a net positive charge, forming a cation."},
+      {type:"tf",diff:"easy",q:"Noble gases are highly reactive elements.",answer:false,explain:"Noble gases have full valence shells, making them extremely stable and unreactive."},
+      {type:"tf",diff:"medium",q:"Increasing temperature always increases the solubility of a gas in water.",answer:false,explain:"Gas solubility in water decreases with increasing temperature."},
+      {type:"tf",diff:"medium",q:"A catalyst speeds up a reaction by lowering the activation energy.",answer:true,explain:"Catalysts provide an alternative reaction pathway with lower activation energy."},
+      {type:"tf",diff:"hard",q:"In a buffer solution, the pH changes dramatically when a small amount of acid is added.",answer:false,explain:"Buffers resist pH changes when small amounts of acid or base are added."},
+      {type:"tf",diff:"hard",q:"The second law of thermodynamics states that entropy of an isolated system tends to increase.",answer:true,explain:"Spontaneous processes increase the total entropy of the universe."},
+      // FILL IN THE BLANK
+      {type:"fill",diff:"easy",q:"The number of protons in an atom defines its ____ number.",answer:["atomic"],explain:"The atomic number equals the number of protons and defines the element."},
+      {type:"fill",diff:"easy",q:"A substance that donates protons (H+) is called an ____.",answer:["acid"],explain:"According to the Bronsted-Lowry definition, acids are proton donors."},
+      {type:"fill",diff:"medium",q:"The amount of substance containing 6.022 x 10²³ particles is called one ____.",answer:["mole","mol"],explain:"One mole = Avogadro's number (6.022 x 10²³) of particles."},
+      {type:"fill",diff:"medium",q:"In a chemical equation, the ____ is the reactant that is completely consumed first.",answer:["limiting reagent","limiting reactant"],explain:"The limiting reagent determines the maximum amount of product that can form."},
+      {type:"fill",diff:"hard",q:"The energy required to remove an electron from a gaseous atom is called ____ energy.",answer:["ionization"],explain:"Ionization energy is the energy needed to remove the most loosely bound electron."},
+      // SHORT ANSWER
+      {type:"short",diff:"medium",q:"Explain the difference between an ionic bond and a covalent bond.",answer:["Ionic bonds involve the transfer of electrons from one atom to another, while covalent bonds involve the sharing of electrons between atoms."],keywords:["transfer","sharing","electron","ionic","covalent","metal","nonmetal"],explain:"Ionic bonds form between metals and nonmetals via electron transfer. Covalent bonds form between nonmetals via electron sharing."},
+      {type:"short",diff:"hard",q:"Describe what happens at the molecular level when NaCl dissolves in water.",answer:["Water molecules surround NaCl due to their polarity. The partially negative oxygen atoms attract Na+ ions while partially positive hydrogen atoms attract Cl- ions, pulling the crystal apart."],keywords:["polar","oxygen","hydrogen","ion","dissociate","hydration","solvation","surround","attract","Na","Cl","crystal"],explain:"Water's polarity allows it to hydrate ions: O atoms orient toward Na+ and H atoms toward Cl-, overcoming the lattice energy and dissolving the crystal."},
+    ]
+  },
+  "algebra": {
+    name: "College Algebra",
+    icon: "📐",
+    desc: "Functions, equations, graphing, and polynomial operations",
+    questions: [
+      // EASY MC
+      {type:"mc",diff:"easy",q:"What is the slope of the line y = 3x + 5?",choices:["5","3","1/3","8"],answer:1,explain:"In y = mx + b form, m is the slope. Here m = 3."},
+      {type:"mc",diff:"easy",q:"Solve for x: 2x + 6 = 14",choices:["3","4","5","8"],answer:1,explain:"2x = 14 - 6 = 8, so x = 4."},
+      {type:"mc",diff:"easy",q:"What is the y-intercept of y = -2x + 7?",choices:["-2","7","2","-7"],answer:1,explain:"In y = mx + b, b is the y-intercept. Here b = 7."},
+      {type:"mc",diff:"easy",q:"Simplify: 3(x + 4)",choices:["3x + 4","3x + 7","3x + 12","x + 12"],answer:2,explain:"Distribute: 3(x) + 3(4) = 3x + 12."},
+      {type:"mc",diff:"easy",q:"What is 5² equal to?",choices:["10","25","32","55"],answer:1,explain:"5² = 5 x 5 = 25."},
+      {type:"mc",diff:"easy",q:"Which of the following is a linear equation?",choices:["y = x²","y = 2x + 1","y = 1/x","y = √x"],answer:1,explain:"y = 2x + 1 is linear because x has an exponent of 1."},
+      // MEDIUM MC
+      {type:"mc",diff:"medium",q:"What are the solutions to x² - 5x + 6 = 0?",choices:["x = 2, 3","x = -2, -3","x = 1, 6","x = -1, -6"],answer:0,explain:"Factor: (x-2)(x-3) = 0, so x = 2 or x = 3."},
+      {type:"mc",diff:"medium",q:"If f(x) = 2x² - 3, what is f(4)?",choices:["29","13","5","61"],answer:0,explain:"f(4) = 2(16) - 3 = 32 - 3 = 29."},
+      {type:"mc",diff:"medium",q:"What is the vertex of the parabola y = (x - 3)² + 2?",choices:["(3, 2)","(-3, 2)","(3, -2)","(2, 3)"],answer:0,explain:"In vertex form y = (x-h)² + k, the vertex is (h, k) = (3, 2)."},
+      {type:"mc",diff:"medium",q:"Simplify: (x³)(x⁴)",choices:["x⁷","x¹²","x⁻¹","2x⁷"],answer:0,explain:"When multiplying with the same base, add exponents: 3 + 4 = 7."},
+      {type:"mc",diff:"medium",q:"What is the domain of f(x) = 1/(x - 4)?",choices:["All real numbers","x ≠ 0","x ≠ 4","x > 4"],answer:2,explain:"The denominator cannot equal zero, so x ≠ 4."},
+      {type:"mc",diff:"medium",q:"The discriminant of ax² + bx + c is b² - 4ac. If it equals zero, the equation has:",choices:["No real solutions","One real solution","Two real solutions","Infinite solutions"],answer:1,explain:"When the discriminant = 0, there is exactly one repeated real root."},
+      // HARD MC
+      {type:"mc",diff:"hard",q:"What is the remainder when 2x³ - 3x² + x - 5 is divided by (x - 2)?",choices:["1","-1","3","-3"],answer:2,explain:"By the Remainder Theorem: f(2) = 2(8) - 3(4) + 2 - 5 = 16 - 12 + 2 - 5 = 1. Wait, let me recalculate: 16 - 12 + 2 - 5 = 1. The answer is 1."},
+      {type:"mc",diff:"hard",q:"Which transformation shifts f(x) left 2 units and up 3 units?",choices:["f(x-2) + 3","f(x+2) + 3","f(x+2) - 3","f(x-2) - 3"],answer:1,explain:"f(x+2) shifts left 2; adding 3 shifts up 3."},
+      {type:"mc",diff:"hard",q:"If log₂(x) = 5, what is x?",choices:["10","25","32","64"],answer:2,explain:"log₂(x) = 5 means 2⁵ = x = 32."},
+      {type:"mc",diff:"hard",q:"What is the inverse of f(x) = (2x + 3)/5?",choices:["f⁻¹(x) = (5x - 3)/2","f⁻¹(x) = (5x + 3)/2","f⁻¹(x) = 5/(2x + 3)","f⁻¹(x) = (2x - 3)/5"],answer:0,explain:"Swap x and y: x = (2y+3)/5, then 5x = 2y+3, so y = (5x-3)/2."},
+      // TRUE/FALSE
+      {type:"tf",diff:"easy",q:"The square root of 144 is 12.",answer:true,explain:"12 x 12 = 144."},
+      {type:"tf",diff:"easy",q:"A vertical line passes the vertical line test for functions.",answer:false,explain:"A vertical line fails the vertical line test; it is not a function."},
+      {type:"tf",diff:"medium",q:"The function f(x) = x² is a one-to-one function.",answer:false,explain:"f(x) = x² is not one-to-one because f(2) = f(-2) = 4; it fails the horizontal line test."},
+      {type:"tf",diff:"medium",q:"Every polynomial function is continuous.",answer:true,explain:"Polynomial functions are continuous over all real numbers with no breaks or holes."},
+      {type:"tf",diff:"hard",q:"The composition of functions is always commutative: f(g(x)) = g(f(x)).",answer:false,explain:"Function composition is generally not commutative. For example, f(x)=x² and g(x)=x+1 give different results."},
+      // FILL IN THE BLANK
+      {type:"fill",diff:"easy",q:"In the equation y = mx + b, m represents the ____ of the line.",answer:["slope"],explain:"The coefficient m gives the rate of change (slope) of the line."},
+      {type:"fill",diff:"easy",q:"The expression x⁰ equals ____ for any nonzero x.",answer:["1","one"],explain:"Any nonzero number raised to the power of 0 equals 1."},
+      {type:"fill",diff:"medium",q:"The quadratic formula is x = (-b ± √(b²-4ac)) / ____.",answer:["2a"],explain:"The full quadratic formula: x = (-b ± √(b²-4ac)) / 2a."},
+      {type:"fill",diff:"medium",q:"The set of all possible output values of a function is called the ____.",answer:["range"],explain:"The range is the set of all output (y) values a function can produce."},
+      {type:"fill",diff:"hard",q:"A function that can be written as f(x) = aˣ where a > 0 and a ≠ 1 is called a(n) ____ function.",answer:["exponential"],explain:"Exponential functions have the variable in the exponent with a constant base."},
+      // SHORT ANSWER
+      {type:"short",diff:"medium",q:"Explain the difference between a relation and a function.",answer:["A relation is any set of ordered pairs. A function is a special relation where each input (x-value) maps to exactly one output (y-value)."],keywords:["relation","function","ordered pair","input","output","one","each","x","y","unique","exactly"],explain:"A function is a relation where every x-value has exactly one corresponding y-value (passes the vertical line test)."},
+      {type:"short",diff:"hard",q:"Describe how to determine if a function has an inverse, and explain the process of finding it.",answer:["A function has an inverse if it is one-to-one (passes the horizontal line test). To find it, swap x and y, then solve for y."],keywords:["one-to-one","horizontal line test","swap","solve","inverse","bijective","x","y"],explain:"Check one-to-one via the horizontal line test. To find f⁻¹: replace f(x) with y, swap x and y, solve for y."},
+    ]
+  }
+};
+
+// ============================================================
+// APP STATE
+// ============================================================
+let state = {
+  course: null,
+  difficulty: 'mixed',
+  formats: ['all'],
+  numQuestions: 10,
+  currentQ: 0,
+  score: 0,
+  questions: [],
+  answered: false
+};
+
+// ============================================================
+// SCREEN MANAGEMENT
+// ============================================================
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+// ============================================================
+// COURSE GRID
+// ============================================================
+function renderCourses() {
+  const grid = document.getElementById('courseGrid');
+  grid.innerHTML = '';
+  for (const [key, course] of Object.entries(QUESTIONS)) {
+    const card = document.createElement('div');
+    card.className = 'course-card';
+    card.onclick = () => selectCourse(key);
+    card.innerHTML = `
+      <div class="course-icon">${course.icon}</div>
+      <h3>${course.name}</h3>
+      <p>${course.desc}</p>
+      <span class="question-count-badge">${course.questions.length} questions</span>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+function selectCourse(key) {
+  state.course = key;
+  document.getElementById('settingsTitle').textContent = QUESTIONS[key].name + ' Quiz';
+  showScreen('settings');
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function setDifficulty(diff) {
+  state.difficulty = diff;
+  document.querySelectorAll('.diff-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.diff === diff);
+  });
+}
+
+function toggleFormat(fmt) {
+  if (fmt === 'all') {
+    state.formats = ['all'];
+  } else {
+    state.formats = state.formats.filter(f => f !== 'all');
+    if (state.formats.includes(fmt)) {
+      state.formats = state.formats.filter(f => f !== fmt);
+    } else {
+      state.formats.push(fmt);
+    }
+    if (state.formats.length === 0) state.formats = ['all'];
+  }
+  document.querySelectorAll('.format-btn').forEach(b => {
+    if (b.dataset.fmt === 'all') {
+      b.classList.toggle('active', state.formats.includes('all'));
+    } else {
+      b.classList.toggle('active', state.formats.includes(b.dataset.fmt));
+    }
+  });
+}
+
+function updateSlider() {
+  const v = document.getElementById('numSlider').value;
+  document.getElementById('sliderVal').textContent = v;
+  state.numQuestions = parseInt(v);
+}
+
+// ============================================================
+// QUIZ ENGINE
+// ============================================================
+function startQuiz() {
+  const pool = QUESTIONS[state.course].questions.filter(q => {
+    const diffOk = state.difficulty === 'mixed' || q.diff === state.difficulty;
+    const fmtOk = state.formats.includes('all') || state.formats.includes(q.type);
+    return diffOk && fmtOk;
+  });
+
+  // Shuffle
+  const shuffled = pool.sort(() => Math.random() - 0.5);
+  state.questions = shuffled.slice(0, Math.min(state.numQuestions, shuffled.length));
+  state.currentQ = 0;
+  state.score = 0;
+  state.answered = false;
+
+  document.getElementById('quizCourse').textContent = QUESTIONS[state.course].name;
+  updateDiffButtons();
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function retryQuiz() {
+  showScreen('settings');
+}
+
+function renderQuestion() {
+  if (state.currentQ >= state.questions.length) {
+    showResults();
+    return;
+  }
+
+  state.answered = false;
+  const q = state.questions[state.currentQ];
+  const area = document.getElementById('questionArea');
+
+  document.getElementById('quizProgress').textContent = `${state.currentQ + 1} / ${state.questions.length}`;
+  document.getElementById('quizScore').textContent = `Score: ${state.score}`;
+  document.getElementById('progressBar').style.width = ((state.currentQ) / state.questions.length * 100) + '%';
+
+  const typeLabels = {mc:'Multiple Choice',tf:'True / False',fill:'Fill in the Blank',short:'Short Answer'};
+
+  let html = `<div class="question-card">
+    <div class="question-meta">
+      <span class="meta-tag ${q.diff}">${q.diff}</span>
+      <span class="meta-tag type">${typeLabels[q.type]}</span>
+    </div>
+    <div class="question-text">${q.q}</div>`;
+
+  if (q.type === 'mc') {
+    html += '<div class="choices">';
+    const letters = ['A','B','C','D'];
+    q.choices.forEach((c, i) => {
+      html += `<button class="choice-btn" onclick="answerMC(${i})" data-idx="${i}">
+        <span class="choice-letter">${letters[i]}</span><span>${c}</span>
+      </button>`;
+    });
+    html += '</div>';
+  } else if (q.type === 'tf') {
+    html += `<div class="tf-buttons">
+      <button class="tf-btn" onclick="answerTF(true)">True</button>
+      <button class="tf-btn" onclick="answerTF(false)">False</button>
+    </div>`;
+  } else if (q.type === 'fill') {
+    html += `<div class="answer-input-container">
+      <input class="answer-input" id="fillInput" placeholder="Type your answer..." 
+        onkeydown="if(event.key==='Enter')submitFill()">
+      <button class="submit-answer-btn" onclick="submitFill()">Submit</button>
+    </div>`;
+  } else if (q.type === 'short') {
+    html += `<div class="answer-input-container">
+      <input class="answer-input" id="shortInput" placeholder="Type your answer..." 
+        onkeydown="if(event.key==='Enter')submitShort()">
+      <button class="submit-answer-btn" onclick="submitShort()">Submit</button>
+    </div>`;
+  }
+
+  html += `<div class="feedback" id="feedback"></div></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>`;
+
+  area.innerHTML = html;
+}
+
+function answerMC(idx) {
+  if (state.answered) return;
+  state.answered = true;
+  const q = state.questions[state.currentQ];
+  const correct = idx === q.answer;
+  if (correct) state.score++;
+
+  document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.answer) btn.classList.add('correct');
+    if (i === idx && !correct) btn.classList.add('wrong');
+  });
+
+  showFeedback(correct, q.explain);
+}
+
+function answerTF(val) {
+  if (state.answered) return;
+  state.answered = true;
+  const q = state.questions[state.currentQ];
+  const correct = val === q.answer;
+  if (correct) state.score++;
+
+  document.querySelectorAll('.tf-btn').forEach(btn => {
+    btn.classList.add('disabled');
+    const btnVal = btn.textContent === 'True';
+    if (btnVal === q.answer) btn.classList.add('correct');
+    if (btnVal === val && !correct) btn.classList.add('wrong');
+  });
+
+  showFeedback(correct, q.explain);
+}
+
+function submitFill() {
+  if (state.answered) return;
+  state.answered = true;
+  const q = state.questions[state.currentQ];
+  const input = document.getElementById('fillInput').value.trim().toLowerCase();
+  const correct = q.answer.some(a => input === a.toLowerCase());
+  if (correct) state.score++;
+
+  const inputEl = document.getElementById('fillInput');
+  inputEl.style.borderColor = correct ? 'var(--easy)' : 'var(--coral)';
+  inputEl.disabled = true;
+
+  showFeedback(correct, q.explain, correct ? null : `Accepted answers: ${q.answer.join(', ')}`);
+}
+
+function submitShort() {
+  if (state.answered) return;
+  state.answered = true;
+  const q = state.questions[state.currentQ];
+  const input = document.getElementById('shortInput').value.trim().toLowerCase();
+  
+  // Score based on keyword matching
+  const matchedKeywords = q.keywords.filter(kw => input.includes(kw.toLowerCase()));
+  const score = matchedKeywords.length / q.keywords.length;
+  const correct = score >= 0.3; // Need at least 30% of keywords
+  if (correct) state.score++;
+
+  const inputEl = document.getElementById('shortInput');
+  inputEl.style.borderColor = correct ? 'var(--easy)' : 'var(--coral)';
+  inputEl.disabled = true;
+
+  const detail = `Keywords found: ${matchedKeywords.length}/${q.keywords.length}. ${correct ? 'Good job!' : 'Try to include more key concepts.'}`;
+  showFeedback(correct, q.explain, detail);
+}
+
+function showFeedback(correct, explain, extra) {
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = `<strong>${correct ? '✓ Correct!' : '✗ Incorrect'}</strong>${explain}${extra ? '<br><em>' + extra + '</em>' : ''}`;
+  document.getElementById('nextBtn').style.display = 'block';
+  document.getElementById('quizScore').textContent = `Score: ${state.score}`;
+}
+
+function nextQuestion() {
+  state.currentQ++;
+  renderQuestion();
+}
+
+// ============================================================
+// DIFFICULTY ADJUSTMENT DURING QUIZ
+// ============================================================
+function adjustDiff(diff) {
+  state.difficulty = diff;
+  // Rebuild remaining questions
+  const remaining = state.questions.length - state.currentQ - 1;
+  if (remaining > 0) {
+    const pool = QUESTIONS[state.course].questions.filter(q => {
+      const diffOk = diff === 'mixed' || q.diff === diff;
+      const fmtOk = state.formats.includes('all') || state.formats.includes(q.type);
+      const notUsed = !state.questions.slice(0, state.currentQ + 1).includes(q);
+      return diffOk && fmtOk && notUsed;
+    }).sort(() => Math.random() - 0.5);
+
+    const newQs = pool.slice(0, remaining);
+    state.questions = [...state.questions.slice(0, state.currentQ + 1), ...newQs];
+  }
+  updateDiffButtons();
+}
+
+function updateDiffButtons() {
+  document.querySelectorAll('.adjust-btn').forEach(b => {
+    b.classList.toggle('active-diff', b.dataset.adj === state.difficulty);
+  });
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+function showResults() {
+  showScreen('results');
+  const pct = Math.round((state.score / state.questions.length) * 100);
+  const circ = document.getElementById('scoreCircle');
+  const offset = 553 - (553 * pct / 100);
+  
+  setTimeout(() => {
+    circ.style.strokeDashoffset = offset;
+    document.getElementById('finalPercent').textContent = pct + '%';
+  }, 100);
+
+  document.getElementById('statCorrect').textContent = state.score;
+  document.getElementById('statWrong').textContent = state.questions.length - state.score;
+  document.getElementById('statTotal').textContent = state.questions.length;
+  document.getElementById('progressBar').style.width = '100%';
+
+  let msg, detail;
+  if (pct >= 90) { msg = 'Outstanding!'; detail = 'You have an excellent grasp of this material.'; }
+  else if (pct >= 70) { msg = 'Great work!'; detail = 'Solid understanding with room for improvement.'; }
+  else if (pct >= 50) { msg = 'Getting there!'; detail = 'Keep studying and try again at a lower difficulty.'; }
+  else { msg = 'Keep practicing!'; detail = 'Consider reviewing the material and trying easier questions first.'; }
+
+  document.getElementById('resultsMessage').textContent = msg;
+  document.getElementById('resultsDetail').textContent = detail;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderCourses();
+</script>
+</body>
+</html>
