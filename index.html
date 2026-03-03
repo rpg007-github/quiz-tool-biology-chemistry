@@ -869,7 +869,7 @@ body::before {
 const QUESTIONS = {
   "bio1": {
     name: "Biology I",
-    icon: "🧬",
+    icon: "<span aria-hidden="true">🧬</span>",
     desc: "Cell biology, genetics, evolution, and ecology fundamentals",
     questions: [
       // EASY MC
@@ -919,7 +919,7 @@ const QUESTIONS = {
   },
   "chem1": {
     name: "General Chemistry I",
-    icon: "⚗️",
+    icon: "<span aria-hidden="true">⚗️</span>",
     desc: "Atomic structure, bonding, stoichiometry, and reactions",
     questions: [
       // EASY MC
@@ -932,7 +932,7 @@ const QUESTIONS = {
       // MEDIUM MC
       {type:"mc",diff:"medium",q:"According to the octet rule, atoms tend to gain, lose, or share electrons to achieve:",choices:["2 valence electrons","4 valence electrons","6 valence electrons","8 valence electrons"],answer:3,explain:"The octet rule states atoms tend to bond to achieve 8 valence electrons (noble gas configuration)."},
       {type:"mc",diff:"medium",q:"What is the molarity of a solution with 2 moles of NaCl in 500 mL of solution?",choices:["1 M","2 M","4 M","0.5 M"],answer:2,explain:"Molarity = moles/liters = 2 mol / 0.5 L = 4 M."},
-      {type:"mc",diff:"medium",q:"In a balanced equation, 2H₂ + O₂ → 2H₂O, how many moles of water are produced from 3 moles of H₂?",choices:["1.5","2","3","6"],answer:2,explain:"The ratio is 2:2, so 3 moles H₂ produces 3 moles H₂O."},
+      {type:"mc",diff:"medium",q:"In a balanced equation, 2H₂ + O₂ <span aria-hidden="true">→</span> 2H₂O, how many moles of water are produced from 3 moles of H₂?",choices:["1.5","2","3","6"],answer:2,explain:"The ratio is 2:2, so 3 moles H₂ produces 3 moles H₂O."},
       {type:"mc",diff:"medium",q:"Which of the following is an exothermic reaction?",choices:["Melting ice","Evaporating water","Combustion of methane","Photosynthesis"],answer:2,explain:"Combustion releases heat energy to the surroundings, making it exothermic."},
       {type:"mc",diff:"medium",q:"What is the electron configuration of nitrogen (Z=7)?",choices:["1s² 2s² 2p¹","1s² 2s² 2p²","1s² 2s² 2p³","1s² 2s² 2p⁴"],answer:2,explain:"Nitrogen has 7 electrons: 1s² 2s² 2p³."},
       {type:"mc",diff:"medium",q:"Le Chatelier's principle states that if a system at equilibrium is disturbed, it will:",choices:["Stop reacting","Shift to counteract the disturbance","Always shift right","Produce more heat"],answer:1,explain:"The system shifts in the direction that partially counteracts the applied change."},
@@ -1002,7 +1002,7 @@ const QUESTIONS = {
   },
   "bio2": {
     name: "Biology II",
-    icon: "🌿",
+    icon: "<span aria-hidden="true">🌿</span>",
     desc: "Plant biology, animal physiology, ecology, and biodiversity",
     questions: [
       // EASY MC
@@ -1048,7 +1048,7 @@ const QUESTIONS = {
   },
   "genetics": {
     name: "Genetics",
-    icon: "🧪",
+    icon: "<span aria-hidden="true">🧪</span>",
     desc: "Mendelian genetics, molecular genetics, gene regulation, and genomics",
     questions: [
       // EASY MC
@@ -1096,7 +1096,7 @@ const QUESTIONS = {
   },
   "chem2": {
     name: "General Chemistry II",
-    icon: "🔬",
+    icon: "<span aria-hidden="true">🔬</span>",
     desc: "Thermodynamics, equilibria, kinetics, and transition metal complexes",
     questions: [
       // === THERMODYNAMICS ===
@@ -1134,10 +1134,10 @@ const QUESTIONS = {
       // MEDIUM MC
       {type:"mc",diff:"medium",q:"According to Le Chatelier's principle, adding more reactant to a system at equilibrium will:",choices:["Shift equilibrium toward reactants","Shift equilibrium toward products","Have no effect","Stop the reaction"],answer:1,explain:"Adding reactant increases its concentration, so the system shifts right to consume it and restore equilibrium."},
       {type:"mc",diff:"medium",q:"The reaction quotient Q is used to:",choices:["Calculate the rate constant","Determine if a system is at equilibrium","Measure activation energy","Find the enthalpy change"],answer:1,explain:"Comparing Q to K tells you which direction the reaction must shift to reach equilibrium."},
-      {type:"mc",diff:"medium",q:"For the equilibrium N2(g) + 3H2(g) ⇌ 2NH3(g), what is the Kp expression?",choices:["(P_NH3)^2 / (P_N2)(P_H2)^3","(P_N2)(P_H2)^3 / (P_NH3)^2","(P_NH3) / (P_N2)(P_H2)","2(P_NH3) / (P_N2)(3P_H2)"],answer:0,explain:"Kp = products over reactants with partial pressures raised to stoichiometric coefficients."},
+      {type:"mc",diff:"medium",q:"For the equilibrium N2(g) + 3H2(g) <span aria-hidden="true">⇌</span> 2NH3(g), what is the Kp expression?",choices:["(P_NH3)^2 / (P_N2)(P_H2)^3","(P_N2)(P_H2)^3 / (P_NH3)^2","(P_NH3) / (P_N2)(P_H2)","2(P_NH3) / (P_N2)(3P_H2)"],answer:0,explain:"Kp = products over reactants with partial pressures raised to stoichiometric coefficients."},
       {type:"mc",diff:"medium",q:"Increasing the temperature of an exothermic reaction at equilibrium will:",choices:["Shift right","Shift left","Have no effect","Increase K"],answer:1,explain:"Heat is a product of exothermic reactions, so increasing T shifts left to absorb the added heat, decreasing K."},
       // HARD MC
-      {type:"mc",diff:"hard",q:"If Kc = 4.0 for A ⇌ 2B and the initial concentration of A is 1.0 M with no B, what is [B] at equilibrium?",choices:["0.5 M","1.0 M","1.24 M","2.0 M"],answer:2,explain:"Let x = amount of A consumed. Kc = (2x)^2/(1-x) = 4. Solving: 4x^2 = 4 - 4x, so 4x^2 + 4x - 4 = 0, x = 0.618. [B] = 2(0.618) = 1.24 M."},
+      {type:"mc",diff:"hard",q:"If Kc = 4.0 for A <span aria-hidden="true">⇌</span> 2B and the initial concentration of A is 1.0 M with no B, what is [B] at equilibrium?",choices:["0.5 M","1.0 M","1.24 M","2.0 M"],answer:2,explain:"Let x = amount of A consumed. Kc = (2x)^2/(1-x) = 4. Solving: 4x^2 = 4 - 4x, so 4x^2 + 4x - 4 = 0, x = 0.618. [B] = 2(0.618) = 1.24 M."},
       {type:"mc",diff:"hard",q:"For a heterogeneous equilibrium, which species are excluded from the equilibrium expression?",choices:["Gases only","Aqueous species","Pure solids and pure liquids","All reactants"],answer:2,explain:"Pure solids and liquids have constant concentrations (activity = 1) and are excluded from K expressions."},
 
       // === ACID-BASE EQUILIBRIA ===
@@ -1870,7 +1870,7 @@ function renderQuestion() {
   }
 
   html += `<div class="feedback" id="feedback"></div></div>
-    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>`;
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question <span aria-hidden="true">→</span></button>`;
 
   area.innerHTML = html;
 }
@@ -1946,7 +1946,7 @@ function submitShort() {
 function showFeedback(correct, explain, extra) {
   const fb = document.getElementById('feedback');
   fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
-  fb.innerHTML = `<strong>${correct ? '✓ Correct!' : '✗ Incorrect'}</strong>${explain}${extra ? '<br><em>' + extra + '</em>' : ''}`;
+  fb.innerHTML = `<strong>${correct ? '<span aria-hidden="true">✓</span> Correct!' : '<span aria-hidden="true">✗</span> Incorrect'}</strong>${explain}${extra ? '<br><em>' + extra + '</em>' : ''}`;
   document.getElementById('nextBtn').style.display = 'block';
   document.getElementById('quizScore').textContent = `Score: ${state.score}`;
 }
